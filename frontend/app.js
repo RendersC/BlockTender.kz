@@ -11,7 +11,6 @@ async function loadABI() {
     CONTRACT_ABI = await res.json();
 }
 
-//  CONNECT =================
 async function connect() {
     if (!window.ethereum) {
         alert("Install MetaMask");
