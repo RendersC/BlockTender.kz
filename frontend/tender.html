@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tender Details | BlockTender.kz</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <h2>BlockTender</h2>
+    <ul>
+      <li><a href="./index.html">Tenders</a></li>
+      <li><a href="./create.html">Create Tender</a></li>
+    </ul>
+  </aside>
+
+  <main class="content">
+
+    <header class="header">
+      <h1>Tender Details</h1>
+
+      <div class="wallet">
+        <button id="connectBtn">Connect MetaMask</button>
+        <span id="account"></span>
+      </div>
+    </header>
+
+    <section class="card">
+      <h3 id="tTitle">Loading...</h3>
+      <p id="tDesc" class="hint"></p>
+
+      <p><b>Goal:</b> <span id="tGoal">-</span></p>
+      <p><b>Raised:</b> <span id="tRaised">-</span></p>
+      <p><b>Status:</b> <span id="tStatus">-</span></p>
+      <p><b>Deadline:</b> <span id="tDeadline">-</span></p>
+      <p><b>Organizer:</b> <span id="tOrganizer">-</span></p>
+    </section>
+
+    <section class="card">
+      <h3>Contribute</h3>
+
+      <input id="amountEth" placeholder="Amount (ETH), e.g. 0.01" />
+      <button id="contributeBtn">Contribute</button>
+
+      <p class="hint" style="margin-top:10px;">
+        Tip: use ETH format (0.01). It will be converted to wei automatically.
+      </p>
+    </section>
+
+    <section class="card" id="organizerSection">
+      <h3>Organizer Actions</h3>
+      <button id="finalizeBtn">Finalize Tender</button>
+    </section>
+
+    <section class="card" id="refundSection">
+      <h3>Refund</h3>
+      <button id="refundBtn">Request Refund</button>
+    </section>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
+<script src="./app.js"></script>
+<script src="./tender.js"></script>
+</body>
+</html>

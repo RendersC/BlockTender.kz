@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BlockTender.kz</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <h2>BlockTender</h2>
+        <ul>
+            <li class="active"><a href="./index.html">Tenders</a></li>
+            <li><a href="./my-tenders.html">My Tenders</a></li>
+            <li><a href="./create.html">Create Tender</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+
+        <header class="header">
+            <h1>Active Tenders</h1>
+
+            <div class="wallet">
+                <button id="connectBtn">Connect MetaMask</button>
+                <span id="account"></span>
+            </div>
+        </header>
+
+        <section class="card">
+            <div id="tenderList" class="tender-list">
+                <p class="hint">Connect MetaMask to load tenders</p>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>

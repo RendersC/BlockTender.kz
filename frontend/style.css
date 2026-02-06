@@ -1,0 +1,154 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+}
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 220px;
+    background: #0f2a44;
+    color: white;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    margin: 0 0 30px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+}
+
+.sidebar li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+}
+
+.sidebar li.active,
+.sidebar li:hover {
+    background: #1b3f5f;
+}
+
+.content {
+    flex: 1;
+    padding: 24px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.wallet {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#account {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* buttons */
+button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.card {
+    background: white;
+    padding: 18px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+.card input {
+    display: block;
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.card input:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+.tender-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.tender {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.tender h4 {
+    margin-top: 0;
+}
+
+.tender p {
+    margin: 6px 0;
+    font-size: 14px;
+}
+
+.tender button {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.hint {
+    opacity: 0.6;
+    font-size: 14px;
+}
