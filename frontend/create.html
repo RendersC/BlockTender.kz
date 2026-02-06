@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Tender | BlockTender.kz</title>
+    <title>Create Tender | BlockTender</title>
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -22,22 +22,56 @@
 
         <header class="header">
             <h1>Create Tender</h1>
-
             <div class="wallet">
-                <button id="connectBtn">Connect MetaMask</button>
                 <span id="account"></span>
             </div>
         </header>
 
-        <section class="card">
-            <h3>Tender Details</h3>
+        <section class="card create-card-full">
 
-            <input id="title" placeholder="Title">
-            <input id="description" placeholder="Description">
-            <input id="goal" placeholder="Goal (wei)">
-            <input id="duration" placeholder="Duration (seconds)">
+            <div class="form-grid">
 
-            <button id="createBtn">Create Tender</button>
+                <!-- LEFT COLUMN -->
+                <div class="form-col">
+                    <h3>📝 Tender Details</h3>
+
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input id="title" placeholder="Road construction project">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="description" rows="6"
+                            placeholder="Describe the project in detail. Scope, requirements, location, etc."></textarea>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN -->
+                <div class="form-col">
+                    <h3>💰 Funding</h3>
+
+                    <div class="form-group">
+                        <label>Goal (ETH)</label>
+                        <input id="goalEth" type="number" step="0.01" placeholder="2.0">
+                        <small>Automatically converted to wei</small>
+                    </div>
+
+                    <h3>⏱️ Duration</h3>
+
+                    <div class="form-group">
+                        <label>Duration (days)</label>
+                        <input id="durationDays" type="number" placeholder="7">
+                        <small>Tender will be active for this number of days</small>
+                    </div>
+                </div>
+
+            </div>
+
+            <button id="createBtn" class="create-btn">
+                🚀 Create Tender
+            </button>
+
         </section>
 
     </main>

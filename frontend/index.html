@@ -20,18 +20,40 @@
 
     <main class="content">
 
-        <header class="header">
+        <header class="header sticky">
             <h1>Active Tenders</h1>
-
             <div class="wallet">
                 <button id="connectBtn">Connect MetaMask</button>
                 <span id="account"></span>
             </div>
         </header>
 
+        <!-- STATS -->
+        <div class="stats">
+            <div class="stat"><b id="statTotal">0</b><span>Total</span></div>
+            <div class="stat"><b id="statActive">0</b><span>Active</span></div>
+            <div class="stat"><b id="statRaised">0 ETH</b><span>Raised</span></div>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="active">Active</button>
+            <button class="filter-btn" data-filter="ended">Ended</button>
+        </div>
+
+        <!-- SORT -->
+        <div class="sort">
+            <span>Sort by:</span>
+            <button class="sort-btn" data-sort="deadline">Deadline</button>
+            <button class="sort-btn" data-sort="raised">Raised</button>
+        </div>
+
         <section class="card">
             <div id="tenderList" class="tender-list">
-                <p class="hint">Connect MetaMask to load tenders</p>
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
             </div>
         </section>
 

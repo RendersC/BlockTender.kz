@@ -14,6 +14,7 @@ body {
     min-height: 100vh;
 }
 
+/* ===== Sidebar ===== */
 .sidebar {
     width: 220px;
     background: #0f2a44;
@@ -48,11 +49,13 @@ body {
     background: #1b3f5f;
 }
 
+/* ===== Content ===== */
 .content {
     flex: 1;
     padding: 24px;
 }
 
+/* ===== Header ===== */
 .header {
     display: flex;
     justify-content: space-between;
@@ -60,8 +63,12 @@ body {
     margin-bottom: 20px;
 }
 
-.header h1 {
-    margin: 0;
+.header.sticky {
+    position: sticky;
+    top: 0;
+    background: #f4f6f8;
+    padding-bottom: 12px;
+    z-index: 5;
 }
 
 .wallet {
@@ -75,7 +82,7 @@ body {
     font-size: 14px;
 }
 
-/* buttons */
+/* ===== Buttons ===== */
 button {
     padding: 8px 14px;
     border: none;
@@ -89,66 +96,264 @@ button:hover {
     background: #1d4ed8;
 }
 
-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
+/* ===== Cards ===== */
 .card {
     background: white;
     padding: 18px;
     border-radius: 8px;
-    margin-bottom: 20px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.06);
 }
 
-.card h3 {
-    margin-top: 0;
+/* ===== Stats ===== */
+.stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
 }
 
-.card input {
+.stat {
+    background: white;
+    padding: 14px 18px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    min-width: 140px;
+}
+
+.stat b {
+    font-size: 20px;
     display: block;
-    width: 100%;
-    margin-bottom: 12px;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 14px;
 }
 
-.card input:focus {
+.stat span {
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+/* ===== Filters & Sort ===== */
+.filters, .sort {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.filter-btn, .sort-btn {
+    background: #e5e7eb;
+    color: #111;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+}
+
+.filter-btn.active {
+    background: #2563eb;
+    color: white;
+}
+
+/* ===== Tender List ===== */
+.tender-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tender-row {
+    display: grid;
+    grid-template-columns: 12px 2fr 1fr 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tender-row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.tender-row.active {
+    border-left: 4px solid #22c55e;
+}
+
+.tender-row.ended {
+    opacity: 0.6;
+}
+
+/* Status dot */
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #22c55e;
+}
+
+.tender-row.ended .status-dot {
+    background: #9ca3af;
+}
+
+/* Info */
+.tender-info h3 {
+    margin: 0;
+    font-size: 15px;
+}
+
+.tender-info p {
+    margin: 2px 0 0;
+    font-size: 13px;
+    opacity: 0.7;
+}
+
+/* Badges */
+.badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: 6px;
+    background: #fde68a;
+}
+
+.badge.soon { background: #fecaca; }
+.badge.done { background: #e5e7eb; }
+
+/* Amount */
+.tender-amount {
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Progress */
+.progress {
+    width: 100%;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+
+/* Time */
+.tender-time {
+    font-size: 13px;
+}
+
+.tender-time.warning { color: #f59e0b; }
+.tender-time.danger { color: #ef4444; }
+
+/* Skeleton */
+.skeleton {
+    height: 56px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 37%, #e5e7eb 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+}
+/* ===== Create Tender ===== */
+
+.create-card {
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.form-group small {
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+.create-btn {
+    width: 100%;
+    margin-top: 20px;
+    font-size: 15px;
+    padding: 12px;
+}
+/* ===== Create Tender Full Width ===== */
+
+.create-card-full {
+    width: 100%;
+    padding: 28px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+    margin-bottom: 24px;
+}
+
+.form-col h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.form-group textarea {
+    min-height: 140px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
     outline: none;
     border-color: #2563eb;
 }
 
-.tender-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 16px;
-}
-
-.tender {
-    background: white;
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-.tender h4 {
-    margin-top: 0;
-}
-
-.tender p {
-    margin: 6px 0;
-    font-size: 14px;
-}
-
-.tender button {
-    margin-top: 10px;
-    width: 100%;
-}
-
-.hint {
+.form-group small {
+    font-size: 12px;
     opacity: 0.6;
-    font-size: 14px;
+}
+
+.create-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 10px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
 }
