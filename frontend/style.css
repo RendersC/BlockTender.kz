@@ -448,3 +448,27 @@ button:hover {
         grid-template-columns: 1fr;
     }
 }
+/* ===== Simple Footer ===== */
+
+.footer-simple {
+    padding: 12px 24px;
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: 13px;
+    color: #6b7280;
+}
+
+
+@media (max-width: 600px) {
+    .footer-simple {
+        flex-direction: column;
+        gap: 6px;
+        text-align: center;
+    }
+}
+
