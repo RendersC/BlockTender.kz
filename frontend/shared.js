@@ -6,13 +6,48 @@ let userAddress = null;
 let userRole = null;  // 0 = USER, 1 = ADMIN
 let hasSubscription = false;
 
-const CONTRACT_ADDRESS = "0x12a9133C9b82A7A45D4DB3Fb744e73b8345867ec";
-let CONTRACT_ABI = [{"inputs":[{"internalType":"address","name":"_rewardToken","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"tenderId","type":"uint256"},{"indexed":true,"internalType":"address","name":"contributor","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Contributed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"tenderId","type":"uint256"},{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Refunded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"enum TenderCrowdfunding.Role","name":"role","type":"uint8"}],"name":"RoleAssigned","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"newPrice","type":"uint256"}],"name":"SubscriptionPriceUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"expiry","type":"uint256"}],"name":"SubscriptionPurchased","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"tenderId","type":"uint256"},{"indexed":true,"internalType":"address","name":"organizer","type":"address"}],"name":"TenderCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"tenderId","type":"uint256"}],"name":"TenderFinalized","type":"event"},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"enum TenderCrowdfunding.Role","name":"role","type":"uint8"}],"name":"assignRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"buySubscription","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tenderId","type":"uint256"}],"name":"contribute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"address","name":"","type":"address"}],"name":"contributions","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"_title","type":"string"},{"internalType":"string","name":"_description","type":"string"},{"internalType":"uint256","name":"_goal","type":"uint256"},{"internalType":"uint256","name":"_duration","type":"uint256"}],"name":"createTender","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tenderId","type":"uint256"}],"name":"finalizeTender","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tenderId","type":"uint256"},{"internalType":"address","name":"user","type":"address"}],"name":"getContribution","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tenderId","type":"uint256"}],"name":"getParticipants","outputs":[{"internalType":"address[]","name":"","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getRole","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getSubscriptionExpiry","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"hasActiveSubscription","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"isAdmin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"participants","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tenderId","type":"uint256"}],"name":"refund","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"rewardToken","outputs":[{"internalType":"contract RewardToken","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"roles","outputs":[{"internalType":"enum TenderCrowdfunding.Role","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"newPrice","type":"uint256"}],"name":"setSubscriptionPrice","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"subscriptionExpiry","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"subscriptionPrice","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tenderCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"tenders","outputs":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"description","type":"string"},{"internalType":"uint256","name":"goal","type":"uint256"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"address","name":"organizer","type":"address"},{"internalType":"bool","name":"finalized","type":"bool"},{"internalType":"uint256","name":"totalRaised","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"withdrawFunds","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+const CONTRACT_ADDRESS = "0xae78C2132B572f11437f22c61a2aDBd689fb0cfd";
+let CONTRACT_ABI = [{"inputs":[{"internalType":"address","name":"_rewardToken","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"tenderId","type":"uint256"},{"indexed":true,"internalType":"address","name":"bidder","type":"address"},{"indexed":false,"internalType":"uint256","name":"price","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"quality","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"daysRequired","type":"uint256"}],"name":"BidSubmitted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"tenderId","type":"uint256"},{"indexed":true,"internalType":"address","name":"organizer","type":"address"}],"name":"TenderCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"tenderId","type":"uint256"},{"indexed":true,"internalType":"address","name":"winner","type":"address"},{"indexed":false,"internalType":"uint256","name":"winningPrice","type":"uint256"}],"name":"TenderFinalized","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"enum TenderCrowdfunding.Role","name":"role","type":"uint8"}],"name":"RoleAssigned","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"expiry","type":"uint256"}],"name":"SubscriptionPurchased","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"newPrice","type":"uint256"}],"name":"SubscriptionPriceUpdated","type":"event"},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"enum TenderCrowdfunding.Role","name":"role","type":"uint8"}],"name":"assignRole","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"buySubscription","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"price","type":"uint256"},{"internalType":"uint256","name":"quality","type":"uint256"},{"internalType":"uint256","name":"daysRequired","type":"uint256"}],"name":"calculateScore","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"string","name":"_title","type":"string"},{"internalType":"string","name":"_description","type":"string"},{"internalType":"uint256","name":"_goal","type":"uint256"},{"internalType":"uint256","name":"_duration","type":"uint256"}],"name":"createTender","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tenderId","type":"uint256"}],"name":"finalizeTender","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tenderId","type":"uint256"}],"name":"getBidCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tenderId","type":"uint256"}],"name":"getBids","outputs":[{"components":[{"internalType":"address","name":"bidder","type":"address"},{"internalType":"uint256","name":"price","type":"uint256"},{"internalType":"uint256","name":"quality","type":"uint256"},{"internalType":"uint256","name":"daysRequired","type":"uint256"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"internalType":"struct TenderCrowdfunding.Bid[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getRole","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"getSubscriptionExpiry","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tenderId","type":"uint256"}],"name":"getWinner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"hasActiveSubscription","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"}],"name":"isAdmin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"rewardToken","outputs":[{"internalType":"contract RewardToken","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"roles","outputs":[{"internalType":"enum TenderCrowdfunding.Role","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"newPrice","type":"uint256"}],"name":"setSubscriptionPrice","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"subscriptionExpiry","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"subscriptionPrice","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tenderId","type":"uint256"},{"internalType":"uint256","name":"price","type":"uint256"},{"internalType":"uint256","name":"quality","type":"uint256"},{"internalType":"uint256","name":"daysRequired","type":"uint256"}],"name":"submitBid","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"subscriptionPrice","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"tenderCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"tenders","outputs":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"description","type":"string"},{"internalType":"uint256","name":"goal","type":"uint256"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"address","name":"organizer","type":"address"},{"internalType":"bool","name":"finalized","type":"bool"},{"internalType":"address","name":"winner","type":"address"},{"internalType":"uint256","name":"winningBidIndex","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"withdrawFunds","outputs":[],"stateMutability":"nonpayable","type":"function"}];
 
 // ==================== LOAD ABI ====================
 async function loadABI() {
     // ABI is now embedded directly
     console.log("✓ ABI loaded");
+}
+
+// ==================== DEBUG HELPERS ====================
+// Call from console: await contractDebug()
+window.contractDebug = async function() {
+    try {
+        console.log('CONTRACT_ADDRESS =', CONTRACT_ADDRESS);
+        if (!provider) provider = new ethers.BrowserProvider(window.ethereum);
+        const code = await provider.getCode(CONTRACT_ADDRESS);
+        console.log('Bytecode at address:', code && code.length > 3 ? 'present' : '0x (no code)');
+        console.log('Raw code:', code);
+
+        if (!contract) {
+            console.log('Contract object not initialized');
+        } else {
+            console.log('Contract object exists');
+            try {
+                console.log('Has submitBid?', typeof contract.submitBid !== 'undefined');
+                console.log('ABI methods (first 20):', contract.interface?.fragments?.slice(0,20).map(f=>f.format()));
+            } catch (e) {
+                console.error('Error inspecting contract:', e);
+            }
+        }
+
+        if (typeof contract?.getBidCount === 'function') {
+            try {
+                const c = await contract.getBidCount(1);
+                console.log('getBidCount(1) =>', c.toString?.() || c);
+            } catch (e) {
+                console.warn('getBidCount call failed:', e.message || e);
+            }
+        }
+    } catch (err) {
+        console.error('contractDebug failed:', err);
+    }
 }
 
 // ==================== CONNECT WALLET ====================
@@ -174,7 +209,6 @@ async function loadTenders() {
         const count = await contract.tenderCount();
         const now = Math.floor(Date.now() / 1000);
 
-        let totalRaised = 0;
         let activeCount = 0;
 
         if (count === 0n) {
@@ -185,71 +219,83 @@ async function loadTenders() {
         list.innerHTML = "";
 
         for (let i = 1; i <= Number(count); i++) {
-            const t = await contract.tenders(i);
-            if (!t.title || t.goal === 0n) continue;
+            try {
+                const t = await contract.tenders(i);
+                if (!t.title || t.goal === 0n) continue;
 
-            const deadline = Number(t.deadline);
-            const diff = deadline - now;
+                const deadline = Number(t.deadline);
+                const diff = deadline - now;
+                
+                let bidsCount = 0;
+                try {
+                    const bidsCountResult = await contract.getBidCount(i);
+                    bidsCount = Number(bidsCountResult);
+                } catch (e) {
+                    console.warn(`Could not get bids count for tender ${i}:`, e.message);
+                }
 
             let status = "active";
             let timeText = "";
             let timeClass = "";
 
-            if (diff <= 0) {
-                status = "ended";
-                timeText = "Ended";
-            } else {
-                const hours = Math.floor(diff / 3600);
-                if (hours >= 24) {
-                    timeText = `${Math.floor(hours / 24)} days left`;
-                } else {
-                    timeText = `${hours} hours left`;
+                if (t.finalized) {
+                    status = "finalized";
+                    timeText = "✓ Winner Selected";
+                } else if (diff <= 0) {
+                    status = "ended";
+                    timeText = "Ready to Finalize";
                     timeClass = "danger";
+                } else {
+                    const hours = Math.floor(diff / 3600);
+                    if (hours >= 24) {
+                        timeText = `${Math.floor(hours / 24)} days left`;
+                    } else {
+                        timeText = `${hours} hours left`;
+                        timeClass = "danger";
+                    }
                 }
-            }
 
-            const goalEth = Number(ethers.formatEther(t.goal));
-            const raisedEth = Number(ethers.formatEther(t.totalRaised));
-            const percent = goalEth > 0 ? Math.min(100, Math.floor((raisedEth / goalEth) * 100)) : 0;
+                if (status === "active") activeCount++;
 
-            totalRaised += raisedEth;
-            if (status === "active") activeCount++;
+                let badge = "";
+                if (t.finalized) {
+                    badge = '<span class="badge done">✓ Finalized</span>';
+                } else if (bidsCount > 5) {
+                    badge = '<span class="badge">🔥 Many bids</span>';
+                } else if (diff < 86400) {
+                    badge = '<span class="badge soon">⏰ Ending soon</span>';
+                }
 
-            let badge = "";
-            if (status === "ended") {
-                badge = '<span class="badge done">Completed</span>';
-            } else if (percent >= 80) {
-                badge = '<span class="badge">🔥 Almost funded</span>';
-            } else if (diff < 86400) {
-                badge = '<span class="badge soon">⏰ Ending soon</span>';
-            }
+                const row = document.createElement("div");
+                row.className = `tender-row ${status}`;
+                row.dataset.deadline = deadline;
+                row.dataset.raised = bidsCount;
 
-            const row = document.createElement("div");
-            row.className = `tender-row ${status}`;
-            row.dataset.deadline = deadline;
-            row.dataset.raised = raisedEth;
-
-            row.innerHTML = `
-                <div class="status-dot"></div>
-                <div class="tender-info">
-                    <h3>${t.title} ${badge}</h3>
-                    <p>${t.description}</p>
-                </div>
-                <div class="tender-amount">
-                    ${raisedEth.toFixed(2)} / ${goalEth.toFixed(2)} ETH
-                    <div class="progress">
-                        <div class="progress-fill" style="width:${percent}%"></div>
+                row.innerHTML = `
+                    <div class="status-dot"></div>
+                    <div class="tender-info">
+                        <h3>${t.title} ${badge}</h3>
+                        <p>${t.description}</p>
                     </div>
-                </div>
-                <div class="tender-time ${timeClass}">${timeText}</div>
-                <div class="tender-action">
-                    <button onclick="handleParticipate(${i}, '${status}')">
-                        ${status === "active" ? "Participate" : "View"}
-                    </button>
-                </div>
-            `;
+                    <div class="tender-amount">
+                        ${bidsCount} bids received
+                        <div class="progress">
+                            <div class="progress-fill" style="width:${Math.min(100, bidsCount * 20)}%"></div>
+                        </div>
+                    </div>
+                    <div class="tender-time ${timeClass}">${timeText}</div>
+                    <div class="tender-action">
+                        <button onclick="openTender(${i})">
+                            ${status === "active" ? "Submit Bid" : "View"}
+                        </button>
+                    </div>
+                `;
 
-            list.appendChild(row);
+                list.appendChild(row);
+            } catch (itemErr) {
+                console.error(`Error loading tender ${i}:`, itemErr);
+                continue;
+            }
         }
 
         // Update stats
@@ -258,34 +304,14 @@ async function loadTenders() {
         const statRaised = document.getElementById("statRaised");
 
         if (statTotal) statTotal.innerText = count;
+
         if (statActive) statActive.innerText = activeCount;
-        if (statRaised) statRaised.innerText = totalRaised.toFixed(2) + " ETH";
+        if (statRaised) statRaised.innerText = "Bidding System";
 
     } catch (err) {
         console.error("Error loading tenders:", err);
-        list.innerHTML = '<p class="hint">Error loading tenders</p>';
+        list.innerHTML = '<p class="hint" style="color: red;">✗ Error: ' + err.message + '</p>';
     }
-}
-
-// ==================== HANDLE PARTICIPATE ====================
-function handleParticipate(id, status) {
-    if (status === "ended") {
-        openTender(id);
-        return;
-    }
-
-    // Check subscription
-    if (userRole === null) {
-        alert("Please connect wallet first");
-        return;
-    }
-
-    if (userRole !== 1 && !hasSubscription) {
-        alert("❌ You need an active subscription to participate");
-        return;
-    }
-
-    openTender(id);
 }
 
 // ==================== OPEN TENDER ====================

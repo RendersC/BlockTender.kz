@@ -13,15 +13,24 @@ contract TenderCrowdfunding {
     /*//////////////////////////////////////////////////////////////
                                 STRUCTS
     //////////////////////////////////////////////////////////////*/
+    struct Bid {
+        address bidder;
+        uint256 price;      // in wei
+        uint256 quality;    // 0-100
+        uint256 daysRequired;
+        uint256 timestamp;
+    }
+
     struct Tender {
         uint256 id;
         string title;
         string description;
-        uint256 goal;          // funding goal (ETH)
+        uint256 goal;          // not used in bidding, but kept for history
         uint256 deadline;      // timestamp
         address organizer;     // creator
         bool finalized;        // finalized or not
-        uint256 totalRaised;   // total ETH raised
+        address winner;        // selected winner after finalization
+        uint256 winningBidIndex;  // index of winning bid
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -33,8 +42,7 @@ contract TenderCrowdfunding {
     RewardToken public rewardToken;
 
     mapping(uint256 => Tender) public tenders;
-    mapping(uint256 => mapping(address => uint256)) public contributions;
-    mapping(uint256 => address[]) public participants;
+    mapping(uint256 => Bid[]) public bids;  // tenderId => array of bids
     mapping(address => Role) public roles;
     mapping(address => uint256) public subscriptionExpiry;
 
@@ -42,9 +50,8 @@ contract TenderCrowdfunding {
                                 EVENTS
     //////////////////////////////////////////////////////////////*/
     event TenderCreated(uint256 indexed tenderId, address indexed organizer);
-    event Contributed(uint256 indexed tenderId, address indexed contributor, uint256 amount);
-    event TenderFinalized(uint256 indexed tenderId);
-    event Refunded(uint256 indexed tenderId, address indexed user, uint256 amount);
+    event BidSubmitted(uint256 indexed tenderId, address indexed bidder, uint256 price, uint256 quality, uint256 daysRequired);
+    event TenderFinalized(uint256 indexed tenderId, address indexed winner, uint256 winningPrice);
     event RoleAssigned(address indexed user, Role role);
     event SubscriptionPurchased(address indexed user, uint256 expiry);
     event SubscriptionPriceUpdated(uint256 newPrice);
@@ -98,73 +105,114 @@ contract TenderCrowdfunding {
             deadline: block.timestamp + _duration,
             organizer: msg.sender,
             finalized: false,
-            totalRaised: 0
+            winner: address(0),
+            winningBidIndex: 0
         });
 
         emit TenderCreated(tenderCount, msg.sender);
     }
 
     /*//////////////////////////////////////////////////////////////
-                            CONTRIBUTE (CROWDFUND)
+                            SUBMIT BID
     //////////////////////////////////////////////////////////////*/
-    function contribute(uint256 tenderId) external payable {
+    function submitBid(
+        uint256 tenderId,
+        uint256 price,
+        uint256 quality,
+        uint256 daysRequired
+    ) external {
         Tender storage t = tenders[tenderId];
 
         require(block.timestamp < t.deadline, "Tender ended");
         require(!t.finalized, "Tender finalized");
-        require(msg.value > 0, "Contribution must be > 0");
+        require(price > 0, "Price must be > 0");
+        require(quality >= 0 && quality <= 100, "Quality must be 0-100");
+        require(daysRequired > 0 && daysRequired <= 365, "Days must be 1-365");
         
         // Check subscription: admins don't need subscription, users do
         if (roles[msg.sender] != Role.ADMIN) {
             require(subscriptionExpiry[msg.sender] > block.timestamp, "Subscription expired");
         }
 
-        // first-time contributor
-        if (contributions[tenderId][msg.sender] == 0) {
-            participants[tenderId].push(msg.sender);
-        }
+        // Submit bid (no payment required)
+        bids[tenderId].push(Bid({
+            bidder: msg.sender,
+            price: price,
+            quality: quality,
+            daysRequired: daysRequired,
+            timestamp: block.timestamp
+        }));
 
-        contributions[tenderId][msg.sender] += msg.value;
-        t.totalRaised += msg.value;
-
-        // Reward tokens: example rate 100 RWT per ETH (wei-based)
-        uint256 rewardAmount = msg.value * 100;
-        rewardToken.mint(msg.sender, rewardAmount);
-
-        emit Contributed(tenderId, msg.sender, msg.value);
+        emit BidSubmitted(tenderId, msg.sender, price, quality, daysRequired);
     }
 
     /*//////////////////////////////////////////////////////////////
-                            FINALIZE
+                            FINALIZE & SELECT WINNER
     //////////////////////////////////////////////////////////////*/
+    function calculateScore(uint256 price, uint256 quality, uint256 daysRequired) 
+        internal pure returns (uint256) 
+    {
+        // score = (1000 ether - price) * 50 + quality * 30 + (365 - daysRequired) * 20
+        uint256 maxPrice = 1000 ether;
+        
+        uint256 priceScore = 0;
+        if (price < maxPrice) {
+            priceScore = (maxPrice - price) / 1e16 * 50;  // normalize price to basis points
+        }
+        
+        uint256 qualityScore = quality * 30;
+        uint256 timeScore = (365 - daysRequired) * 20;
+        
+        return priceScore + qualityScore + timeScore;
+    }
+
     function finalizeTender(uint256 tenderId) external {
         Tender storage t = tenders[tenderId];
 
         require(msg.sender == t.organizer, "Only organizer");
         require(block.timestamp >= t.deadline, "Too early");
         require(!t.finalized, "Already finalized");
+        require(bids[tenderId].length > 0, "No bids received");
 
+        // Find winner with highest score
+        uint256 maxScore = 0;
+        uint256 winnerIndex = 0;
+
+        for (uint256 i = 0; i < bids[tenderId].length; i++) {
+            Bid storage b = bids[tenderId][i];
+            uint256 score = calculateScore(b.price, b.quality, b.daysRequired);
+            
+            if (score > maxScore) {
+                maxScore = score;
+                winnerIndex = i;
+            }
+        }
+
+        Bid storage winningBid = bids[tenderId][winnerIndex];
+        t.winner = winningBid.bidder;
+        t.winningBidIndex = winnerIndex;
         t.finalized = true;
 
-        emit TenderFinalized(tenderId);
+        // Mint reward tokens to winner
+        uint256 rewardAmount = 1000 * 10 ** 18;  // 1000 RWT to winner
+        rewardToken.mint(t.winner, rewardAmount);
+
+        emit TenderFinalized(tenderId, t.winner, winningBid.price);
     }
 
     /*//////////////////////////////////////////////////////////////
-                            REFUND
+                        VIEW HELPERS
     //////////////////////////////////////////////////////////////*/
-    function refund(uint256 tenderId) external {
-        Tender storage t = tenders[tenderId];
+    function getBids(uint256 tenderId) external view returns (Bid[] memory) {
+        return bids[tenderId];
+    }
 
-        require(t.finalized, "Not finalized");
+    function getBidCount(uint256 tenderId) external view returns (uint256) {
+        return bids[tenderId].length;
+    }
 
-        uint256 amount = contributions[tenderId][msg.sender];
-        require(amount > 0, "Nothing to refund");
-
-        contributions[tenderId][msg.sender] = 0;
-        (bool success, ) = payable(msg.sender).call{value: amount}("");
-        require(success, "Transfer failed");
-
-        emit Refunded(tenderId, msg.sender, amount);
+    function getWinner(uint256 tenderId) external view returns (address) {
+        return tenders[tenderId].winner;
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -213,14 +261,4 @@ contract TenderCrowdfunding {
         require(success, "Withdrawal failed");
     }
 
-    /*//////////////////////////////////////////////////////////////
-                            VIEW HELPERS
-    //////////////////////////////////////////////////////////////*/
-    function getParticipants(uint256 tenderId) external view returns (address[] memory) {
-        return participants[tenderId];
-    }
-
-    function getContribution(uint256 tenderId, address user) external view returns (uint256) {
-        return contributions[tenderId][user];
-    }
 }
