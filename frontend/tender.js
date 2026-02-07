@@ -5,21 +5,22 @@ if (tenderId === null) {
     alert("Tender ID not found");
 }
 
-const contributeBtn = document.getElementById("contributeBtn");
-const finalizeBtn = document.getElementById("finalizeBtn");
-const refundBtn = document.getElementById("refundBtn");
-
+// ==================== LOAD TENDER DETAILS ====================
 async function loadTenderDetails() {
-    if (!contract || tenderId === null) return;
+    if (!contract || !tenderId) {
+        console.log("Waiting for contract...");
+        return;
+    }
 
     try {
+        console.log("Loading tender details for ID:", tenderId);
+        
         const t = await contract.tenders(tenderId);
-        const user = await signer.getAddress();
 
         document.getElementById("tTitle").innerText = t.title;
         document.getElementById("tDesc").innerText = t.description;
-        document.getElementById("tGoal").innerText = t.goal + " wei";
-        document.getElementById("tRaised").innerText = t.totalRaised + " wei";
+        document.getElementById("tGoal").innerText = (Number(ethers.formatEther(t.goal))).toFixed(2) + " ETH";
+        document.getElementById("tRaised").innerText = (Number(ethers.formatEther(t.totalRaised))).toFixed(2) + " ETH";
 
         document.getElementById("tOrganizer").innerText =
             t.organizer.slice(0, 6) + "..." + t.organizer.slice(-4);
@@ -35,94 +36,125 @@ async function loadTenderDetails() {
         document.getElementById("tDeadline").innerText =
             new Date(deadline * 1000).toLocaleString();
 
-        if (
-            user.toLowerCase() === t.organizer.toLowerCase() &&
-            !t.finalized &&
-            now >= deadline
-        ) {
-            finalizeBtn.style.display = "inline-block";
-        } else {
-            finalizeBtn.style.display = "none";
+        // Show finalize button if user is organizer
+        const finalizeBtn = document.getElementById("finalizeBtn");
+        if (finalizeBtn) {
+            if (
+                userAddress.toLowerCase() === t.organizer.toLowerCase() &&
+                !t.finalized &&
+                now >= deadline
+            ) {
+                finalizeBtn.style.display = "inline-block";
+            } else {
+                finalizeBtn.style.display = "none";
+            }
         }
 
-        const contribution = await contract.getContribution(tenderId, user);
-
-        if (t.finalized && contribution > 0n) {
-            refundBtn.style.display = "inline-block";
-        } else {
-            refundBtn.style.display = "none";
+        // Show refund button if finalized and user has contribution
+        const contribution = await contract.getContribution(tenderId, userAddress);
+        const refundBtn = document.getElementById("refundBtn");
+        if (refundBtn) {
+            if (t.finalized && contribution > 0n) {
+                refundBtn.style.display = "inline-block";
+            } else {
+                refundBtn.style.display = "none";
+            }
         }
+
+        console.log("✓ Tender details loaded");
 
     } catch (err) {
-        console.error(err);
-        alert("Error loading tender details");
+        console.error("Error loading tender details:", err);
+        alert("Error loading tender: " + err.message);
     }
 }
 
-// ================= CONTRIBUTE =================
-if (contributeBtn) {
-    contributeBtn.onclick = async () => {
-        if (!contract) {
-            alert("Connect MetaMask first");
-            return;
-        }
+// ==================== CONTRIBUTE ====================
+document.getElementById("contributeBtn")?.addEventListener("click", async () => {
+    if (!contract || !signer) {
+        alert("Please connect wallet first");
+        return;
+    }
 
-        const amountEth = document.getElementById("amountEth").value;
+    // Check subscription (admins don't need it)
+    if (userRole !== 1 && !hasSubscription) {
+        alert("❌ You need an active subscription to participate");
+        return;
+    }
 
-        if (!amountEth || Number(amountEth) <= 0) {
-            alert("Enter amount in ETH");
-            return;
-        }
+    const amountEth = document.getElementById("amountEth")?.value;
 
-        try {
-            const amountWei = ethers.parseEther(amountEth);
+    if (!amountEth || Number(amountEth) <= 0) {
+        alert("Please enter a valid amount");
+        return;
+    }
 
-            const tx = await contract.contribute(
-                BigInt(tenderId),
-                { value: amountWei }
-            );
+    try {
+        const amountWei = ethers.parseEther(amountEth);
 
-            await tx.wait();
-            alert("Contribution successful!");
+        const tx = await contract.contribute(
+            BigInt(tenderId),
+            { value: amountWei }
+        );
 
-            document.getElementById("amountEth").value = "";
+        alert("Processing contribution...");
+        await tx.wait();
+        alert("✓ Contribution successful!");
+
+        document.getElementById("amountEth").value = "";
+        await loadTenderDetails();
+
+    } catch (err) {
+        console.error("Error contributing:", err);
+        alert("Error: " + err.message);
+    }
+});
+
+// ==================== FINALIZE TENDER ====================
+document.getElementById("finalizeBtn")?.addEventListener("click", async () => {
+    try {
+        const tx = await contract.finalizeTender(tenderId);
+        alert("Processing finalization...");
+        await tx.wait();
+        alert("✓ Tender finalized!");
+        await loadTenderDetails();
+    } catch (err) {
+        console.error("Error finalizing tender:", err);
+        alert("Error: " + err.message);
+    }
+});
+
+// ==================== REFUND ====================
+document.getElementById("refundBtn")?.addEventListener("click", async () => {
+    try {
+        const tx = await contract.refund(tenderId);
+        alert("Processing refund...");
+        await tx.wait();
+        alert("✓ Refund successful!");
+        await loadTenderDetails();
+    } catch (err) {
+        console.error("Error requesting refund:", err);
+        alert("Error: " + err.message);
+    }
+});
+
+// ==================== INITIALIZE ====================
+window.addEventListener("load", async () => {
+    console.log("Tender page loaded, tenderId:", tenderId);
+    
+    // Wait for shared.js to initialize
+    const maxAttempts = 20;
+    let attempts = 0;
+    
+    const checkReady = setInterval(() => {
+        attempts++;
+        if (typeof contract !== 'undefined' && contract && userAddress) {
+            clearInterval(checkReady);
+            console.log("✓ Contract ready, loading tender details");
             loadTenderDetails();
-
-        } catch (err) {
-            console.error(err);
-            alert("Contribution failed");
+        } else if (attempts >= maxAttempts) {
+            clearInterval(checkReady);
+            console.log("Contract not ready, please connect wallet");
         }
-    };
-}
-
-if (finalizeBtn) {
-    finalizeBtn.onclick = async () => {
-        try {
-            const tx = await contract.finalizeTender(tenderId);
-            await tx.wait();
-            alert("Tender finalized");
-            loadTenderDetails();
-        } catch (err) {
-            console.error(err);
-            alert("Finalize failed");
-        }
-    };
-}
-
-if (refundBtn) {
-    refundBtn.onclick = async () => {
-        try {
-            const tx = await contract.refund(tenderId);
-            await tx.wait();
-            alert("Refund successful");
-            loadTenderDetails();
-        } catch (err) {
-            console.error(err);
-            alert("Refund failed");
-        }
-    };
-}
-
-window.addEventListener("load", () => {
-    setTimeout(loadTenderDetails, 800);
+    }, 100);
 });

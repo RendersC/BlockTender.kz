@@ -13,8 +13,8 @@
         <h2>BlockTender</h2>
         <ul>
             <li><a href="./index.html">Tenders</a></li>
-            <li><a href="./my-tenders.html">My Tenders</a></li>
             <li class="active"><a href="./create.html">Create Tender</a></li>
+            <li><a href="./admin.html">Admin Panel</a></li>
         </ul>
     </aside>
 
@@ -23,54 +23,64 @@
         <header class="header">
             <h1>Create Tender</h1>
             <div class="wallet">
+                <button id="connectBtn">Connect MetaMask</button>
                 <span id="account"></span>
             </div>
         </header>
 
         <section class="card create-card-full">
 
-            <div class="form-grid">
-
-                <!-- LEFT COLUMN -->
-                <div class="form-col">
-                    <h3>📝 Tender Details</h3>
-
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input id="title" placeholder="Road construction project">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea id="description" rows="6"
-                            placeholder="Describe the project in detail. Scope, requirements, location, etc."></textarea>
-                    </div>
-                </div>
-
-                <!-- RIGHT COLUMN -->
-                <div class="form-col">
-                    <h3>💰 Funding</h3>
-
-                    <div class="form-group">
-                        <label>Goal (ETH)</label>
-                        <input id="goalEth" type="number" step="0.01" placeholder="2.0">
-                        <small>Automatically converted to wei</small>
-                    </div>
-
-                    <h3>⏱️ Duration</h3>
-
-                    <div class="form-group">
-                        <label>Duration (days)</label>
-                        <input id="durationDays" type="number" placeholder="7">
-                        <small>Tender will be active for this number of days</small>
-                    </div>
-                </div>
-
+            <div id="notAdminMsg" style="display: none; background: #fff3cd; border: 2px solid #ff9800; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+                <h3 style="color: #ff9800; margin: 0 0 10px 0;">⚠️ Access Denied</h3>
+                <p style="margin: 0; color: #333;">Only administrators can create tenders. Please contact the administrator to request admin access.</p>
             </div>
 
-            <button id="createBtn" class="create-btn">
-                🚀 Create Tender
-            </button>
+            <div id="createFormContainer">
+
+                <div class="form-grid">
+
+                    <!-- LEFT COLUMN -->
+                    <div class="form-col">
+                        <h3>📝 Tender Details</h3>
+
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input id="title" placeholder="Road construction project">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="description" rows="6"
+                                placeholder="Describe the project in detail. Scope, requirements, location, etc."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="form-col">
+                        <h3>💰 Funding</h3>
+
+                        <div class="form-group">
+                            <label>Goal (ETH)</label>
+                            <input id="goalEth" type="number" step="0.01" placeholder="2.0">
+                            <small>Automatically converted to wei</small>
+                        </div>
+
+                        <h3>⏱️ Duration</h3>
+
+                        <div class="form-group">
+                            <label>Duration (days)</label>
+                            <input id="durationDays" type="number" placeholder="7">
+                            <small>Tender will be active for this number of days</small>
+                        </div>
+                    </div>
+
+                </div>
+
+                <button id="createBtn" class="create-btn">
+                    🚀 Create Tender
+                </button>
+
+            </div>
 
             <section class="create-helper">
 
@@ -122,6 +132,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
-<script src="./app.js"></script>
+<script src="./shared.js"></script>
 </body>
 </html>

@@ -13,8 +13,8 @@
         <h2>BlockTender</h2>
         <ul>
             <li class="active"><a href="./index.html">Tenders</a></li>
-            <li><a href="./my-tenders.html">My Tenders</a></li>
             <li><a href="./create.html">Create Tender</a></li>
+            <li><a href="./admin.html">Admin Panel</a></li>
         </ul>
     </aside>
 
@@ -23,6 +23,7 @@
         <header class="header sticky">
             <h1>Active Tenders</h1>
             <div class="wallet">
+                <div id="subscriptionStatus"></div>
                 <button id="connectBtn">Connect MetaMask</button>
                 <span id="account"></span>
             </div>
@@ -34,6 +35,15 @@
             <div class="stat"><b id="statActive">0</b><span>Active</span></div>
             <div class="stat"><b id="statRaised">0 ETH</b><span>Raised</span></div>
         </div>
+
+        <!-- SUBSCRIPTION SECTION -->
+        <section id="subscriptionSection" class="card" style="display: none; background: #fff3cd; border-left: 4px solid #ff9800;">
+            <h3 style="margin: 0 0 10px 0; color: #ff9800;">⚠ Active Subscription Required</h3>
+            <p style="margin: 0 0 15px 0; color: #333;">You need an active subscription to participate in tenders. Each subscription costs <strong>0.50 ETH</strong> and lasts for 1 year.</p>
+            <button onclick="buySubscription()" style="background: #ff9800; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                💳 Buy Subscription (0.50 ETH)
+            </button>
+        </section>
 
         <!-- FILTERS -->
         <div class="filters">
@@ -61,7 +71,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
-<script src="./app.js"></script>
+<script src="./shared.js"></script>
 </body>
 </html>
 <footer class="footer-simple">

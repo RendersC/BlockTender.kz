@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel | BlockTender</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <h2>BlockTender</h2>
+        <ul>
+            <li><a href="./index.html">Tenders</a></li>
+            <li><a href="./create.html">Create Tender</a></li>
+            <li class="active"><a href="./admin.html">Admin Panel</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+
+        <header class="header">
+            <h1>Admin Panel</h1>
+            <div class="wallet">
+                <button id="connectBtn">Connect MetaMask</button>
+                <span id="account"></span>
+            </div>
+        </header>
+
+        <!-- CHECK IF OWNER -->
+        <div id="notOwnerMsg" style="display: none;">
+            <section class="card">
+                <h3>❌ Access Denied</h3>
+                <p>Only the contract owner can access this panel.</p>
+            </section>
+        </div>
+
+        <div id="adminPanel" style="display: none;">
+
+            <!-- MANAGE ROLES -->
+            <section class="card">
+                <h2>🛡️ Manage Roles</h2>
+                
+                <div class="form-grid">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label>User Address</label>
+                            <input id="roleAddress" placeholder="0x..." type="text">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Role</label>
+                            <select id="roleSelect">
+                                <option value="0">User (Can participate)</option>
+                                <option value="1">Admin (Can create tenders)</option>
+                            </select>
+                        </div>
+
+                        <button id="assignRoleBtn" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                            ✓ Assign Role
+                        </button>
+                    </div>
+
+                    <div class="form-col">
+                        <h3>📋 Check User Role</h3>
+                        <div class="form-group">
+                            <label>User Address</label>
+                            <input id="checkAddress" placeholder="0x..." type="text">
+                        </div>
+                        <button id="checkRoleBtn" style="background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                            🔍 Check Role
+                        </button>
+                        <div id="roleResult" style="margin-top: 10px; padding: 10px; background: #f5f5f5; border-radius: 4px; display: none;"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SUBSCRIPTION SETTINGS -->
+            <section class="card">
+                <h2>💳 Subscription Settings</h2>
+                
+                <div class="form-grid">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label>Current Price</label>
+                            <input id="currentPrice" type="text" disabled placeholder="Loading...">
+                        </div>
+                        <div class="form-group">
+                            <label>New Price (in ETH)</label>
+                            <input id="newPrice" type="number" placeholder="0.50" step="0.01" min="0">
+                        </div>
+                        <button id="updatePriceBtn" style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                            💰 Update Price
+                        </button>
+                    </div>
+
+                    <div class="form-col">
+                        <h3>Withdraw Funds</h3>
+                        <p>Withdraw all collected subscription payments.</p>
+                        <button id="withdrawBtn" style="background: #9b59b6; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                            🏦 Withdraw All Funds
+                        </button>
+                        <div id="withdrawResult" style="margin-top: 10px; padding: 10px; background: #f5f5f5; border-radius: 4px; display: none;"></div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
+<script src="./shared.js"></script>
+<script src="./admin.js"></script>
+</body>
+</html>
